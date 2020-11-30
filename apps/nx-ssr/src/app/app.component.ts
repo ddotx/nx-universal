@@ -7,4 +7,8 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'nx-ssr';
+
+  openLink() {
+    window.open('https://google.com', '_blank')
+  }
 }

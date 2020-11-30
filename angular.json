@@ -11,7 +11,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/apps/nx-ssr",
+            "outputPath": "dist/nx-ssr/browser",
             "index": "apps/nx-ssr/src/index.html",
             "main": "apps/nx-ssr/src/main.ts",
             "polyfills": "apps/nx-ssr/src/polyfills.ts",
@@ -74,7 +74,8 @@
           "options": {
             "tsConfig": [
               "apps/nx-ssr/tsconfig.app.json",
-              "apps/nx-ssr/tsconfig.spec.json"
+              "apps/nx-ssr/tsconfig.spec.json",
+              "apps/nx-ssr/tsconfig.server.json"
             ],
             "exclude": ["**/node_modules/**", "!apps/nx-ssr/**/*"]
           }
@@ -86,6 +87,53 @@
             "tsConfig": "apps/nx-ssr/tsconfig.spec.json",
             "passWithNoTests": true,
             "setupFile": "apps/nx-ssr/src/test-setup.ts"
+          }
+        },
+        "server": {
+          "builder": "@angular-devkit/build-angular:server",
+          "options": {
+            "outputPath": "dist/nx-ssr/server",
+            "main": "apps/nx-ssr/server.ts",
+            "tsConfig": "apps/nx-ssr/tsconfig.server.json"
+          },
+          "configurations": {
+            "production": {
+              "outputHashing": "media",
+              "fileReplacements": [
+                {
+                  "replace": "apps/nx-ssr/src/environments/environment.ts",
+                  "with": "apps/nx-ssr/src/environments/environment.prod.ts"
+                }
+              ],
+              "sourceMap": false,
+              "optimization": true
+            }
+          }
+        },
+        "serve-ssr": {
+          "builder": "@nguniversal/builders:ssr-dev-server",
+          "options": {
+            "browserTarget": "nx-ssr:build",
+            "serverTarget": "nx-ssr:server"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "nx-ssr:build:production",
+              "serverTarget": "nx-ssr:server:production"
+            }
+          }
+        },
+        "prerender": {
+          "builder": "@nguniversal/builders:prerender",
+          "options": {
+            "browserTarget": "nx-ssr:build:production",
+            "serverTarget": "nx-ssr:server:production",
+            "routes": [
+              "/"
+            ]
+          },
+          "configurations": {
+            "production": {}
           }
         }
       }
